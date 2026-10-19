@@ -249,6 +249,11 @@ textarea{min-height:90px;resize:vertical}
 .news h2{color:#1B1640}
 .news p{color:#3a3460}
 .news form{display:flex;gap:8px;flex-wrap:wrap}
+.news-form{display:grid!important;gap:10px}
+.news-form input:not([type=checkbox]){width:100%;background:#fff;border:1.5px solid #1B1640;border-radius:10px;padding:10px 12px;color:#1B1640}
+.nchk{display:flex;gap:8px;align-items:flex-start;font-size:.85rem;color:#2c2650;line-height:1.4}
+.nchk input{margin-top:3px;width:auto}
+.news-form .btn{justify-self:start}
 .news input{flex:1 1 220px;background:#fff;border-color:#1B1640;color:#1B1640}
 .news .btn{border-color:#1B1640;background:#1B1640;color:#F8E231}
 .news .ok{margin-top:10px;font-weight:600}
@@ -652,12 +657,15 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
       <div>
         <p class="eyebrow" style="color:#3a3460">The Ful list</p>
         <h2>Hear about gatherings first</h2>
-        <p style="margin-top:8px">One friendly email when new events are posted. No spam, unsubscribe anytime.</p>
+        <p style="margin-top:8px">Get a note by email or text when a new gathering is posted.</p>
       </div>
       <div>
-        <form id="newsForm" novalidate>
-          <label for="nEmail" style="position:absolute;left:-9999px">Email address</label>
-          <input id="nEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
+        <form id="newsForm" class="news-form" novalidate>
+          <input id="nName" placeholder="Your name" autocomplete="name" aria-label="Your name">
+          <input id="nEmail" type="email" placeholder="Email" autocomplete="email" aria-label="Email">
+          <input id="nPhone" type="tel" placeholder="Mobile number (for texts)" autocomplete="tel" aria-label="Mobile number">
+          <label class="nchk" for="nByEmail"><input type="checkbox" id="nByEmail" checked> Email me about new gatherings</label>
+          <label class="nchk" for="nByText"><input type="checkbox" id="nByText"> Text me about new gatherings. I agree to receive recurring texts from Ful at this number. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.</label>
           <button class="btn" type="submit">Join the list</button>
         </form>
         <p class="ok" id="newsMsg" role="status"></p>
@@ -964,9 +972,14 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
   /* ---------- newsletter ---------- */
   document.getElementById("newsForm").addEventListener("submit", ev=>{
     ev.preventDefault();
-    const v = document.getElementById("nEmail").value.trim(), msg = document.getElementById("newsMsg");
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){ msg.textContent = "Enter an email address to join."; return; }
-    msg.innerHTML = 'To finish joining, email <span class="addr">'+CONTACT+'</span> with "Add me to the Ful list" from '+esc(v)+'. <a href="mailto:'+CONTACT+'?subject='+encodeURIComponent("Add me to the Ful list")+'&body='+encodeURIComponent("Please add "+v+" to the Ful newsletter.")+'" target="_blank" rel="noopener">Open email</a>';
+    const msg=document.getElementById("newsMsg");
+    const name=document.getElementById("nName").value.trim(), email=document.getElementById("nEmail").value.trim(), phone=document.getElementById("nPhone").value.trim();
+    const byEmail=document.getElementById("nByEmail").checked, byText=document.getElementById("nByText").checked;
+    if(!byEmail && !byText){ msg.textContent="Choose email, text, or both."; return; }
+    if(byEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg.textContent="Add your email to get email updates."; return; }
+    if(byText && phone.replace(/\D/g,"").length<10){ msg.textContent="Add a mobile number to get texts."; return; }
+    const body=["Please add me to the Ful list.","","Name: "+(name||"—"),"Email: "+(email||"—"),"Mobile: "+(phone||"—"),"Email updates: "+(byEmail?"Yes":"No"),"Text updates: "+(byText?"Yes, I agree to receive recurring texts from Ful. Msg & data rates may apply. Reply STOP to opt out.":"No")].join("\n");
+    msg.innerHTML='Almost there: send this to <span class="addr">'+CONTACT+'</span> to finish joining. <a href="mailto:'+CONTACT+'?subject='+encodeURIComponent("Add me to the Ful list")+'&body='+encodeURIComponent(body)+'" target="_blank" rel="noopener">Open email</a>';
   });
 
   /* ---------- admin availability ---------- */
