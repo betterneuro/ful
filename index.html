@@ -88,7 +88,7 @@ section.band.alt{background:var(--card);border-block:1px solid var(--line)}
 .sec-head .lede{margin-top:8px}
 
 /* events */
-.ev-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px}
+.ev-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;max-width:760px}
 .cal{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
 section.band.alt .cal{background:var(--paper)}
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -363,7 +363,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
         </div>
       </div>
       <div class="ev-layout">
-        <div class="cal" aria-label="Events calendar">
+        <div class="cal" aria-label="Events calendar" hidden>
           <div class="cal-head">
             <button class="icon-btn" id="evPrev" aria-label="Previous month">‹</button>
             <strong id="evMonth">Month</strong>
