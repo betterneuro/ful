@@ -1032,7 +1032,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
     else g.innerHTML = list.map((p,i)=>{
       const ini = (p.name||"?").split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase();
       const link = safeLink(p.link);
-      const mark = (typeof p.logo==="string" && /^data:image\/(png|webp|jpeg|svg\+xml);base64,/.test(p.logo)) ? `<span class="plogo"><img src="${p.logo}" alt="${esc(p.name||"")} logo"></span>` : `<span class="ini" style="background:${COMM_COLORS[i%4]}">${esc(ini)}</span>`;
+      const mark = (typeof p.logo==="string" && (/^data:image\/(png|webp|jpeg|svg\+xml);base64,/.test(p.logo) || /^(logos\/[\w.-]+|https:\/\/[^\s"<>]+)$/.test(p.logo))) ? `<span class="plogo"><img src="${esc(p.logo)}" alt="${esc(p.name||"")} logo"></span>` : `<span class="ini" style="background:${COMM_COLORS[i%4]}">${esc(ini)}</span>`;
       return `<article class="person"><div class="who">${mark}<div style="min-width:0"><h3>${esc(p.name||"")}</h3>${p.business?`<div class="biz">${esc(p.business)}</div>`:""}</div></div>${p.offering?`<p>${esc(p.offering)}</p>`:""}${link?`<a class="go" href="${esc(link)}" target="_blank" rel="noopener">Visit</a>`:""}</article>`;
     }).join("");
     const cl = document.getElementById("cList");
@@ -1117,8 +1117,8 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
   (function(){
     const D = window.FUL_DATA || {};
     openDates = new Set(Array.isArray(D.openDates) ? D.openDates : []);
-    community = Array.isArray(D.community) ? D.community : [];
-    events = (Array.isArray(D.events) ? D.events : []).filter(e=>typeof e.date==="string" && /^\d{4}-\d{2}-\d{2}$/.test(e.date));
+    community = (Array.isArray(D.circle) ? D.circle : Array.isArray(D.community) ? D.community : []).filter(c=>c && c.name).map((c,i)=>Object.assign({order:i},c));
+    events = (Array.isArray(D.events) ? D.events : []).filter(e=>e && typeof e.date==="string" && /^\d{4}-\d{2}-\d{2}$/.test(e.date)).map((e,i)=>Object.assign({id:"ev"+i},e));
     renderAll(); renderCommunity();
   })();
 })();
